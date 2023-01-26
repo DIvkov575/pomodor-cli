@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	// "os"
 	"strconv"
 	"time"
 
@@ -11,8 +11,8 @@ import (
 	"github.com/charmbracelet/bubbles/timer"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	mcobra "github.com/muesli/mango-cobra"
-	"github.com/muesli/roff"
+	// mcobra "github.com/muesli/mango-cobra"
+	// "github.com/muesli/roff"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +30,7 @@ type model struct {
 func (m model) Init() tea.Cmd {
 	return m.timer.Init()
 }
+
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -101,7 +102,6 @@ var (
 	name                string
 	altscreen           bool
 	winHeight, winWidth int
-	version             = "dev"
 	quitKeys            = key.NewBinding(key.WithKeys("esc", "q"))
 	intKeys             = key.NewBinding(key.WithKeys("ctrl+c"))
 	boldStyle           = lipgloss.NewStyle().Bold(true)
@@ -114,10 +114,8 @@ const (
 )
 
 var rootCmd = &cobra.Command{
-	Use:          "timer",
-	Short:        "timer is like sleep, but with progress report",
-	Version:      version,
-	SilenceUsage: true,
+	// Use:          "timer",
+	// SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		addSuffixIfArgIsNumber(&(args[0]), "s")
@@ -151,35 +149,65 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-var manCmd = &cobra.Command{
-	Use:                   "man",
-	Short:                 "Generates man pages",
-	SilenceUsage:          true,
-	DisableFlagsInUseLine: true,
-	Hidden:                true,
-	Args:                  cobra.NoArgs,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		manPage, err := mcobra.NewManPage(1, rootCmd)
-		if err != nil {
-			return err
-		}
-
-		_, err = fmt.Fprint(os.Stdout, manPage.Build(roff.NewDocument()))
-		return err
-	},
-}
+// var manCmd = &cobra.Command{
+// 	Use:                   "man",
+// 	Short:                 "Generates man pages",
+// 	SilenceUsage:          true,
+// 	DisableFlagsInUseLine: true,
+// 	Hidden:                true,
+// 	Args:                  cobra.NoArgs,
+// 	RunE: func(cmd *cobra.Command, args []string) error {
+// 		manPage, err := mcobra.NewManPage(1, rootCmd)
+// 		if err != nil {
+// 			return err
+// 		}
+//
+// 		_, err = fmt.Fprint(os.Stdout, manPage.Build(roff.NewDocument()))
+// 		return err
+// 	},
+// }
 
 func init() {
-	rootCmd.Flags().StringVarP(&name, "name", "n", "", "timer name")
-	rootCmd.Flags().BoolVarP(&altscreen, "fullscreen", "f", false, "fullscreen")
+	// rootCmd.Flags().StringVarP(&name, "name", "n", "", "timer name")
+	// rootCmd.Flags().BoolVarP(&altscreen, "fullscreen", "f", false, "fullscreen")
 
-	rootCmd.AddCommand(manCmd)
+	// rootCmd.AddCommand(manCmd)
 }
 
 func main() {
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
-	}
+	// if err := rootCmd.Execute(); err != nil {
+	// 	os.Exit(1)
+	// }
+  // rootCmd.Execute();
+
+		// duration, err := time.ParseDuration(args[0])
+    var duration = "3s"
+		// if err != nil {
+		// 	return err
+		// }
+		var opts []tea.ProgramOption
+		if altscreen {
+			opts = append(opts, tea.WithAltScreen())
+		}
+		m, err := tea.NewProgram(model{
+			duration:  *duration,
+			timer:     timer.NewWithInterval(*duration, time.Second),
+			progress:  progress.New(progress.WithDefaultGradient()),
+			name:      name,
+			altscreen: altscreen,
+			start:     time.Now(),
+		}, opts...).Run()
+		if err != nil {
+			return err
+		}
+		if m.(model).interrupting {
+			return fmt.Errorf("interrupted")
+		}
+		if name != "" {
+			cmd.Printf("%s ", name)
+		}
+		cmd.Printf("finished!\n")
+		return nil
 }
 
 func addSuffixIfArgIsNumber(s *string, suffix string) {
