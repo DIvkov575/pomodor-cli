@@ -4,6 +4,7 @@ import (
 	"time"
   "os"
   "fmt"
+  "bufio"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
@@ -11,6 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
   "github.com/spf13/cobra"
+  "github.com/gen2brain/beeep"
 
 )
 
@@ -119,14 +121,17 @@ const (
 	// rootCmd.AddCommand(manCmd)
 // }
 
-func main() {
-  for i := 0; i < cycles; i++ {
-    duration, _:= time.ParseDuration(time_durations[i%2])
-    var name string = name_options[i%2]
+func notification(title string, body string) {
+  beeep.Beep(beeep.DefaultFreq, beeep.DefaultDuration)
+  beeep.Alert(title, body, "assets/warning.png")
+}
 
-    var rootCmd = &cobra.Command{
-      Args:         cobra.ExactArgs(0),
-      RunE: func(cmd *cobra.Command, args []string) error {
+func timerA(duration_str string, name string){
+  duration, _:= time.ParseDuration(duration_str)
+
+    // var rootCmd = &cobra.Command{
+    //   Args:         cobra.ExactArgs(0),
+    //   RunE: func(cmd *cobra.Command, args []string) error {
         var opts []tea.ProgramOption
         if altscreen {
           opts = append(opts, tea.WithAltScreen())
@@ -139,21 +144,71 @@ func main() {
           altscreen: altscreen,
           start:     time.Now(),
         }, opts...).Run()
-        if err != nil {
-          return err
-        }
-        if m.(model).interrupting {
-          return fmt.Errorf("interrupted")
-        }
-        if name != "" {
-          cmd.Printf("%s ", name)
-        }
-        cmd.Printf("finished!\n")
-        return nil
-      },
-    }
-    if err := rootCmd.Execute(); err != nil {
-      os.Exit(1)
-    }
-  }
+        // if err != nil {
+        //   return err
+        // }
+      //   if m.(model).interrupting {
+      //     return fmt.Errorf("interrupted")
+      //   }
+      //   if name != "" {
+      //     cmd.Printf("%s ", name)
+      //   }
+      //   cmd.Printf("finished!\n")
+      //   return nil
+      // },
+    // }
+    // if err := rootCmd.Execute(); err != nil {
+    //   os.Exit(1)
+    // }
 }
+
+func interlude() int {
+  fmt.Println("Press Enter to Continue")
+  reader := bufio.NewReader(os.Stdin)
+  reader.ReadString('\n')
+ // text, _ := reader.ReadString('\n')
+  // if (text[0] == '\n') {
+  //   fmt.Println("newline")
+  //  return 0
+  // }
+  // fmt.Println(text)
+  
+  return 1
+}
+
+func main() {
+
+    // var rootCmd = &cobra.Command{
+    //   Args:         cobra.ExactArgs(0),
+    //   RunE: func(cmd *cobra.Command, args []string) error {
+    //     var opts []tea.ProgramOption
+    //     if altscreen {
+    //       opts = append(opts, tea.WithAltScreen())
+    //     }
+    //     m, err := tea.NewProgram(model{
+    //       duration:  duration,
+    //       timer:     timer.NewWithInterval(duration, time.Second),
+    //       progress:  progress.New(progress.WithDefaultGradient()),
+    //       name:      name,
+    //       altscreen: altscreen,
+    //       start:     time.Now(),
+    //     }, opts...).Run()
+    //     if err != nil {
+    //       return err
+    //     }
+    //     if m.(model).interrupting {
+    //       return fmt.Errorf("interrupted")
+    //     }
+    //     if name != "" {
+    //       cmd.Printf("%s ", name)
+    //     }
+    //     cmd.Printf("finished!\n")
+    //     return nil
+    //   },
+    // }
+    // if err := rootCmd.Execute(); err != nil {
+    //   os.Exit(1)
+    // }
+  timerA("5s", "5s")
+  
+  }
