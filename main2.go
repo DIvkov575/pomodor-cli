@@ -103,45 +103,15 @@ var (
 	intKeys             = key.NewBinding(key.WithKeys("ctrl+c"))
 	boldStyle           = lipgloss.NewStyle().Bold(true)
 	italicStyle         = lipgloss.NewStyle().Italic(true)
+  time_durations = [...]string {"1s", "2s"};
+  name_options = [...]string {"work", "break"}
 )
 
 const (
 	padding  = 2
 	maxWidth = 80
+  cycles = 5; 
 )
-
-var rootCmd = &cobra.Command{
-	// Use:          "timer",
-	// SilenceUsage: true,
-	// Args:         cobra.ExactArgs(0),
-	RunE: func() error {
-    duration, _:= time.ParseDuration("3s")
-		var opts []tea.ProgramOption
-		if altscreen {
-			opts = append(opts, tea.WithAltScreen())
-		}
-		m, err := tea.NewProgram(model{
-			duration:  duration,
-			timer:     timer.NewWithInterval(duration, time.Second),
-			progress:  progress.New(progress.WithDefaultGradient()),
-			name:      name,
-			altscreen: altscreen,
-			start:     time.Now(),
-		}, opts...).Run()
-		if err != nil {
-			return err
-		}
-		if m.(model).interrupting {
-			return fmt.Errorf("interrupted")
-		}
-		if name != "" {
-			cmd.Printf("%s ", name)
-		}
-		cmd.Printf("finished!\n")
-		return nil
-	},
-}
-
 // func init() {
 	// rootCmd.Flags().StringVarP(&name, "name", "n", "", "timer name")
 	// rootCmd.Flags().BoolVarP(&altscreen, "fullscreen", "f", false, "fullscreen")
@@ -149,34 +119,41 @@ var rootCmd = &cobra.Command{
 	// rootCmd.AddCommand(manCmd)
 // }
 
-  func wrapperidk() {
-    
-    duration, _:= time.ParseDuration("3s")
-
-		var opts []tea.ProgramOption
-		if altscreen {
-			opts = append(opts, tea.WithAltScreen())
-		}
-		m := tea.NewProgram(model{
-			duration:  duration,
-			timer:     timer.NewWithInterval(duration, time.Second),
-			progress:  progress.New(progress.WithDefaultGradient()),
-			name:      name,
-			altscreen: altscreen,
-			start:     time.Now(),
-		}, opts...)
-    m.Run()
-    fmt.Fprint(os.Stdout, "complted")
-    m.Run()
-		// if name != "" {
-		// 	cmd.Printf("%s ", name)
-		// }
-		// cmd.Printf("finished!\n")
-  }
 func main() {
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
-	}
-  // wrapperidk()
-		// duration, err := time.ParseDuration(args[0])
+  for i := 0; i < cycles; i++ {
+    duration, _:= time.ParseDuration(time_durations[i%2])
+    var name string = name_options[i%2]
+
+    var rootCmd = &cobra.Command{
+      Args:         cobra.ExactArgs(0),
+      RunE: func(cmd *cobra.Command, args []string) error {
+        var opts []tea.ProgramOption
+        if altscreen {
+          opts = append(opts, tea.WithAltScreen())
+        }
+        m, err := tea.NewProgram(model{
+          duration:  duration,
+          timer:     timer.NewWithInterval(duration, time.Second),
+          progress:  progress.New(progress.WithDefaultGradient()),
+          name:      name,
+          altscreen: altscreen,
+          start:     time.Now(),
+        }, opts...).Run()
+        if err != nil {
+          return err
+        }
+        if m.(model).interrupting {
+          return fmt.Errorf("interrupted")
+        }
+        if name != "" {
+          cmd.Printf("%s ", name)
+        }
+        cmd.Printf("finished!\n")
+        return nil
+      },
+    }
+    if err := rootCmd.Execute(); err != nil {
+      os.Exit(1)
+    }
+  }
 }
