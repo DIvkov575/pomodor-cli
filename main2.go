@@ -113,8 +113,8 @@ const (
 var rootCmd = &cobra.Command{
 	// Use:          "timer",
 	// SilenceUsage: true,
-	Args:         cobra.ExactArgs(0),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	// Args:         cobra.ExactArgs(0),
+	RunE: func() error {
     duration, _:= time.ParseDuration("3s")
 		var opts []tea.ProgramOption
 		if altscreen {
