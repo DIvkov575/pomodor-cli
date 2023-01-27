@@ -1,19 +1,31 @@
-package main
-
+package main 
 import (
 	"time"
   "os"
   "fmt"
   "bufio"
+  "strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/timer"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-  "github.com/spf13/cobra"
   "github.com/gen2brain/beeep"
+)
 
+var (
+	name                string
+	altscreen           bool
+	winHeight, winWidth int
+	quitKeys            = key.NewBinding(key.WithKeys("esc", "q"))
+	intKeys             = key.NewBinding(key.WithKeys("ctrl+c"))
+	boldStyle           = lipgloss.NewStyle().Bold(true)
+	italicStyle         = lipgloss.NewStyle().Italic(true)
+)
+const (
+	padding  = 2
+	maxWidth = 80
 )
 
 type model struct {
@@ -97,30 +109,6 @@ func (m model) View() string {
 	return result
 }
 
-var (
-	name                string
-	altscreen           bool
-	winHeight, winWidth int
-	quitKeys            = key.NewBinding(key.WithKeys("esc", "q"))
-	intKeys             = key.NewBinding(key.WithKeys("ctrl+c"))
-	boldStyle           = lipgloss.NewStyle().Bold(true)
-	italicStyle         = lipgloss.NewStyle().Italic(true)
-  time_durations = [...]string {"1s", "2s"};
-  name_options = [...]string {"work", "break"}
-)
-
-const (
-	padding  = 2
-	maxWidth = 80
-  cycles = 5; 
-)
-// func init() {
-	// rootCmd.Flags().StringVarP(&name, "name", "n", "", "timer name")
-	// rootCmd.Flags().BoolVarP(&altscreen, "fullscreen", "f", false, "fullscreen")
-
-	// rootCmd.AddCommand(manCmd)
-// }
-
 func notification(title string, body string) {
   beeep.Beep(beeep.DefaultFreq, beeep.DefaultDuration)
   beeep.Alert(title, body, "assets/warning.png")
@@ -136,7 +124,7 @@ func timerA(duration_str string, name string){
         if altscreen {
           opts = append(opts, tea.WithAltScreen())
         }
-        m, err := tea.NewProgram(model{
+        tea.NewProgram(model{
           duration:  duration,
           timer:     timer.NewWithInterval(duration, time.Second),
           progress:  progress.New(progress.WithDefaultGradient()),
@@ -162,53 +150,18 @@ func timerA(duration_str string, name string){
     // }
 }
 
-func interlude() int {
-  fmt.Println("Press Enter to Continue")
+func interlude() {
   reader := bufio.NewReader(os.Stdin)
-  reader.ReadString('\n')
- // text, _ := reader.ReadString('\n')
-  // if (text[0] == '\n') {
-  //   fmt.Println("newline")
-  //  return 0
-  // }
-  // fmt.Println(text)
-  
-  return 1
+  for {
+    fmt.Println("Press Enter to Continue or type 'Exit' to quit")
+    text, _ := reader.ReadString('\n')
+    if (strings.ToLower(strings.TrimRight(text, "\n")) == "exit"){
+      os.Exit(0)
+    } else if (string(text[0]) == "\n") {
+      return
+    }
+  }
+  return
 }
 
-func main() {
 
-    // var rootCmd = &cobra.Command{
-    //   Args:         cobra.ExactArgs(0),
-    //   RunE: func(cmd *cobra.Command, args []string) error {
-    //     var opts []tea.ProgramOption
-    //     if altscreen {
-    //       opts = append(opts, tea.WithAltScreen())
-    //     }
-    //     m, err := tea.NewProgram(model{
-    //       duration:  duration,
-    //       timer:     timer.NewWithInterval(duration, time.Second),
-    //       progress:  progress.New(progress.WithDefaultGradient()),
-    //       name:      name,
-    //       altscreen: altscreen,
-    //       start:     time.Now(),
-    //     }, opts...).Run()
-    //     if err != nil {
-    //       return err
-    //     }
-    //     if m.(model).interrupting {
-    //       return fmt.Errorf("interrupted")
-    //     }
-    //     if name != "" {
-    //       cmd.Printf("%s ", name)
-    //     }
-    //     cmd.Printf("finished!\n")
-    //     return nil
-    //   },
-    // }
-    // if err := rootCmd.Execute(); err != nil {
-    //   os.Exit(1)
-    // }
-  timerA("5s", "5s")
-  
-  }
