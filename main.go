@@ -19,9 +19,29 @@ var (
   duration    string       
   cycles      = "" 
 )
+var manCmd = &cobra.Command{
+	Use:                   "man",
+	Short:                 "Generates man pages",
+	SilenceUsage:          true,
+	DisableFlagsInUseLine: true,
+	Hidden:                true,
+	Args:                  cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		manPage, err := mcobra.NewManPage(1, rootCmd)
+		if err != nil {
+			return err
+		}
 
+		_, err = fmt.Fprint(os.Stdout, manPage.Build(roff.NewDocument()))
+		return err
+	},
+}
+struct Config {
+
+}
 
 func init() {
+	rootCmd.AddCommand(manCmd)
   rootCmd.Flags().StringVarP(&cycles, "cycles", "c", "", "Number of Cycles")
 
   config, err := toml.LoadFile("config.toml")
@@ -60,9 +80,8 @@ var rootCmd = &cobra.Command{
           }
         }
       }
-    }
     return nil
-  },
+    },
 }
 
 func main() {
