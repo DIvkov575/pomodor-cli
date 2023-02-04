@@ -37,6 +37,7 @@ archives:
       amd64: x86_64
     files:
       - install.sh
+      - README.md
 
 checksum:
   name_template: 'checksums.txt'
