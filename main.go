@@ -18,7 +18,7 @@ var (
   duration    string       
   cycles      = "" 
   cycle_ctr   = 0
-  source      ="."
+  source      =""
 )
 
 var manCmd = &cobra.Command{
@@ -61,7 +61,7 @@ var rootCmd = &cobra.Command{
       fmt.Println("run")
     }
     if (source == "") {
-      source = "~/"
+      source, _ =  os.UserHomeDir()
     }
     cycle_lengths, cycle_names, confirm_new := getConf(source)
     if (cycles != "") {

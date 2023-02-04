@@ -3,3 +3,4 @@ Session.vim
 .git/
 github_token
 dist/
+vendor/

@@ -1,4 +1,4 @@
-module github.com/Divkov575/pomodor-cli
+module github.com/Divkov575/pomodoro-cli
 
 go 1.19
 

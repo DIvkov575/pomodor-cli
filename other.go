@@ -82,13 +82,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if key.Matches(msg, quitKeys) {
 			m.quitting = true
-      os.Exit(1)
 			// return m, tea.Quit
+      os.Exit(1)
 		}
 		if key.Matches(msg, intKeys) {
 			m.interrupting = true
-      os.Exit(1)
 			// return m, tea.Quit
+      os.Exit(1)
 		}
     if key.Matches(msg, skipKey) {
 			m.interrupting = true
