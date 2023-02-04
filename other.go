@@ -81,11 +81,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if key.Matches(msg, quitKeys) {
 			m.quitting = true
-			return m, tea.Quit
+      os.Exit(1)
+			// return m, tea.Quit
 		}
 		if key.Matches(msg, intKeys) {
 			m.interrupting = true
-			return m, tea.Quit
+      os.Exit(1)
+			// return m, tea.Quit
 		}
 	}
 
@@ -94,7 +96,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	if m.quitting || m.interrupting {
-		return "\n"
+		return ""
 	}
 
 	result := boldStyle.Render(m.start.Format(time.Kitchen))
@@ -116,10 +118,6 @@ func notification(title string, body string) {
 
 func timerA(duration_str string, name string){
   duration, _:= time.ParseDuration(duration_str)
-
-    // var rootCmd = &cobra.Command{
-    //   Args:         cobra.ExactArgs(0),
-    //   RunE: func(cmd *cobra.Command, args []string) error {
         var opts []tea.ProgramOption
         if altscreen {
           opts = append(opts, tea.WithAltScreen())
@@ -132,34 +130,21 @@ func timerA(duration_str string, name string){
           altscreen: altscreen,
           start:     time.Now(),
         }, opts...).Run()
-        // if err != nil {
-        //   return err
-        // }
-      //   if m.(model).interrupting {
-      //     return fmt.Errorf("interrupted")
-      //   }
-      //   if name != "" {
-      //     cmd.Printf("%s ", name)
-      //   }
-      //   cmd.Printf("finished!\n")
-      //   return nil
-      // },
-    // }
-    // if err := rootCmd.Execute(); err != nil {
-    //   os.Exit(1)
-    // }
 }
 
-func interlude() {
+func interlude(confirm_new bool) {
   reader := bufio.NewReader(os.Stdin)
-  for {
-    fmt.Println("Press Enter to Continue or type 'Exit' to quit")
-    text, _ := reader.ReadString('\n')
-    if (strings.ToLower(strings.TrimRight(text, "\n")) == "exit"){
-      os.Exit(0)
-    } else if (string(text[0]) == "\n") {
-      return
+  if confirm_new {
+    for {
+      fmt.Println("Press Enter to Continue or type 'q' to quit")
+      text, _ := reader.ReadString('\n')
+      if (strings.ToLower(strings.TrimRight(text, "\n")) == "q"){
+        os.Exit(0)
+      } else if (string(text[0]) == "\n") {
+        return
+      }
     }
+
   }
   return
 }

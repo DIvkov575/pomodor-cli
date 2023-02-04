@@ -1,0 +1,11 @@
+cycles_lengths:
+  - "25m"
+  - "5m"
+cycle_names:
+  - "Work"
+  - "Break"
+confirm_new: false
+
+# [config]
+# cycles_lengths = ["25m", "5m"]
+# cycle_names = ["Work", "Break"]

@@ -1,3 +1,0 @@
-[config]
-cycles = ["25m", "5m"]
-cycle_names = ["Work", "Break"]
