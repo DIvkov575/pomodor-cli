@@ -20,6 +20,7 @@ var (
 	winHeight, winWidth int
 	quitKeys            = key.NewBinding(key.WithKeys("esc", "q"))
 	intKeys             = key.NewBinding(key.WithKeys("ctrl+c"))
+  skipKey             = key.NewBinding(key.WithKeys("s"))
 	boldStyle           = lipgloss.NewStyle().Bold(true)
 	italicStyle         = lipgloss.NewStyle().Italic(true)
 )
@@ -89,7 +90,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
       os.Exit(1)
 			// return m, tea.Quit
 		}
-	}
+    if key.Matches(msg, skipKey) {
+			m.interrupting = true
+      return m, tea.Quit
+    }
+}
 
 	return m, nil
 }
