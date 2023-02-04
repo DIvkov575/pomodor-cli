@@ -1,4 +1,4 @@
-module github.com/caarlos0/timer
+module github.com/Divkov575/pomodor-cli
 
 go 1.19
 
