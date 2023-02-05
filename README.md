@@ -10,7 +10,7 @@ inorder to install:
 3) run 'pomodoro-cli run'
 4) if error occurs in step 3, add a pomodoro-config.yaml containing text below to your user root dir (~/) 
 
-"""cycles_lengths:
+cycles_lengths:
 
   - "25m"
 
@@ -22,7 +22,7 @@ cycle_names:
 
   - "Break"
 
-confirm_new: false"""
+confirm_new: false
 
 
 ---
