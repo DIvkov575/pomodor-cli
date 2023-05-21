@@ -1,26 +1,25 @@
 package main 
 import (
-	"time"
-  "os"
-  "fmt"
-  "bufio"
-  "strings"
-
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/progress"
-	"github.com/charmbracelet/bubbles/timer"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-  "github.com/gen2brain/beeep"
+   "time" // time duh
+   "os" // os interactions duh
+   "fmt" // string formatting duh.  
+   "bufio" // idk what this is
+   "strings" // hoping to skew github stats
+   "github.com/charmbracelet/bubbles/key" // tui stuff
+   "github.com/charmbracelet/bubbles/progress" // tui progress bar
+   "github.com/charmbracelet/bubbles/timer" // (tui) timer above progress bar
+   tea "github.com/charmbracelet/bubbletea" // tui stuff
+   "github.com/charmbracelet/lipgloss" // idk even know
+   "github.com/gen2brain/beeep" // audio (for notifications)
 )
 
 var (
-	name                string
+	name                string                                    
 	altscreen           bool
 	winHeight, winWidth int
 	quitKeys            = key.NewBinding(key.WithKeys("esc", "q"))
 	intKeys             = key.NewBinding(key.WithKeys("ctrl+c"))
-  skipKey             = key.NewBinding(key.WithKeys("s"))
+  	skipKey             = key.NewBinding(key.WithKeys("s"))
 	boldStyle           = lipgloss.NewStyle().Bold(true)
 	italicStyle         = lipgloss.NewStyle().Italic(true)
 )
@@ -40,10 +39,11 @@ type model struct {
 	interrupting bool
 }
 
+
 func (m model) Init() tea.Cmd {
 	return m.timer.Init()
 }
-
+// main loop for updating progress bar / tui animation
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case timer.TickMsg:
@@ -79,20 +79,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.progress = progressModel.(progress.Model)
 		return m, cmd
 
+	// used solelly for quitting app
 	case tea.KeyMsg:
+		// also for quitting app
 		if key.Matches(msg, quitKeys) {
 			m.quitting = true
 			// return m, tea.Quit
-      os.Exit(1)
+      			os.Exit(1)
 		}
+		// for quitting app
 		if key.Matches(msg, intKeys) {
 			m.interrupting = true
 			// return m, tea.Quit
-      os.Exit(1)
+      			os.Exit(1)
 		}
-    if key.Matches(msg, skipKey) {
+		// also the same exact thing
+    		if key.Matches(msg, skipKey) {
 			m.interrupting = true
-      return m, tea.Quit
+		      return m, tea.Quit
     }
 }
 
@@ -116,11 +120,12 @@ func (m model) View() string {
 	return result
 }
 
+// notifications
 func notification(title string, body string) {
   beeep.Beep(beeep.DefaultFreq, beeep.DefaultDuration)
   beeep.Alert(title, body, "assets/warning.png")
 }
-
+// main tui rendering function     
 func timerA(duration_str string, name string){
   duration, _:= time.ParseDuration(duration_str)
         var opts []tea.ProgramOption
@@ -136,7 +141,7 @@ func timerA(duration_str string, name string){
           start:     time.Now(),
         }, opts...).Run()
 }
-
+// confirms with user whether they would like to exit or continue with timer
 func interlude(confirm_new bool) {
   reader := bufio.NewReader(os.Stdin)
   if confirm_new {
